@@ -26,16 +26,13 @@
         bash-language-server
         vscode-json-languageserver
         nixd
+        gcc
       ];
 
-      # Import your Neovim config directory as a Nix source
       nvimConfig = pkgs.lib.cleanSource ./nvim;
-
-      # Create a derivation that packages your config in the store
       nvimConfigPath =
         pkgs.runCommand "nvim-config"
           {
-            # no special build inputs needed, just copying files
           }
           ''
             mkdir -p $out

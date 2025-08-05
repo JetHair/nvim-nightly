@@ -16,16 +16,21 @@ vim.o.winborder = "single"
 
 -- plugin install
 vim.pack.add({
-    { name = "doom-one.nvim",  src = "https://github.com/NTBBloodbath/doom-one.nvim" },
-    { name = "mini.pick",      src = "https://github.com/echasnovski/mini.pick" },
-    { name = "mini.clue",      src = "https://github.com/echasnovski/mini.clue" },
-    { name = "undotree",       src = "https://github.com/jiaoshijie/undotree" },
-    { name = "mini.pairs",     src = "https://github.com/echasnovski/mini.pairs" },
-    { name = "nvim-lspconfig", src = "https://github.com/neovim/nvim-lspconfig" },
+    { name = "doom-one.nvim",   src = "https://github.com/NTBBloodbath/doom-one.nvim" },
+    { name = "mini.pick",       src = "https://github.com/echasnovski/mini.pick" },
+    { name = "mini.clue",       src = "https://github.com/echasnovski/mini.clue" },
+    { name = "mini.pairs",      src = "https://github.com/echasnovski/mini.pairs" },
+    { name = "undotree",        src = "https://github.com/jiaoshijie/undotree" },
+    { name = "nvim-treesitter", src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 })
 -- asthetics
 vim.cmd("colorscheme doom-one")
 vim.cmd(":hi statusline guibg=NONE")
+
+-- treesitter setup
+require "nvim-treesitter.configs".setup({
+    ensure_installed = {"lua", "typescript", "javascript", "python", "go", "json", "c", "nix", "yaml"}
+})
 
 --lsp config
 vim.lsp.enable({ "lua_ls", "pyright", "ts_ls", "gopls", "nixd", "jsonls", "cssls", "html", "clangd", "yamlls" })
@@ -45,7 +50,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         end
     end,
 })
-vim.keymap.set('i', '<C-o>', '<C-x><C-o>', { noremap = true, silent = true })
+vim.keymap.set('i', '<C-l>', '<C-x><C-o>', { noremap = true, silent = true })
 vim.opt.completeopt = { "menu", "menuone", "noselect", "fuzzy", "noinsert" }
 
 -- system clipboard remap
@@ -60,7 +65,9 @@ vim.keymap.set('n', '<leader>sg', ":Pick grep_live<CR>", { noremap = true, silen
 vim.keymap.set('n', '<leader>sf', ":Pick files<CR>", { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>sh', ":Pick help<CR>", { noremap = true, silent = true })
 vim.keymap.set('n', '<leader><leader>', ":Pick buffers<CR>", { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>.', require('mini.files').open)
+vim.keymap.set('n', '<leader>.', function()
+  require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
+end)
 
 -- other keymap
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
