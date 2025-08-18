@@ -1,17 +1,12 @@
 {
-  description = "Neovim Nightly with lsp and embedded config";
+  description = "Neovim Nightly with lsp and full config deployment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     neovim.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      neovim,
-    }:
+  outputs = { self, nixpkgs, neovim }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
@@ -26,22 +21,27 @@
         bash-language-server
         vscode-json-languageserver
         nixd
-        gcc
       ];
 
-      nvimConfig = pkgs.lib.cleanSource ./nvim;
-      nvimConfigPath =
-        pkgs.runCommand "nvim-config"
-          {
-          }
-          ''
-            mkdir -p $out
-            cp -r ${nvimConfig}/* $out/
-          '';
+      # Copy the entire nvim directory to .config/nvim
+      nvimConfig = pkgs.stdenv.mkDerivation {
+        name = "nvim-config";
+        src = ./nvim;
+        installPhase = ''
+          mkdir -p $out/.config/nvim
+          cp -r $src/* $out/.config/nvim/
+        '';
+      };
 
       nvimNightly = pkgs.writeShellScriptBin "nvim" ''
+        # Deploy the config if it doesn't exist
+        if [ ! -d "$HOME/.config/nvim" ]; then
+          mkdir -p "$HOME/.config"
+          cp -r ${nvimConfig}/.config/nvim "$HOME/.config/"
+        fi
+        
         PATH="${pkgs.lib.makeBinPath lspPackages}:$PATH" \
-        exec ${neovim.packages.${system}.neovim}/bin/nvim -u ${nvimConfigPath}/init.lua "$@"
+        exec ${neovim.packages.${system}.neovim}/bin/nvim "$@"
       '';
     in
     {

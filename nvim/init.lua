@@ -1,3 +1,6 @@
+local config_dir = vim.fs.dirname(debug.getinfo(1, 'S').source:sub(2))
+vim.opt.runtimepath:append(config_dir)
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.o.hlsearch = true
@@ -33,7 +36,7 @@ require "nvim-treesitter.configs".setup({
 })
 
 --lsp config
-vim.lsp.enable({ "lua_ls", "pyright", "ts_ls", "gopls", "nixd", "jsonls", "cssls", "html", "clangd", "yamlls" })
+vim.lsp.enable({ "lua_ls", "pylsp","ruff", "ts_ls", "gopls", "nixd", "jsonls", "cssls", "html", "clangd", "yamlls" })
 vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format)
 vim.api.nvim_create_user_command('DiagnosticsToggleVirtualText', function()
     local current = vim.diagnostic.config().virtual_text

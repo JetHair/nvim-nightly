@@ -68,6 +68,7 @@
 --- * [Lua.workspace.library](https://luals.github.io/wiki/settings/#workspacelibrary)
 ---
 return {
+    print("Loaded lua_ls LSP config")
     cmd = { 'lua-language-server' },
     filetypes = { 'lua' },
     root_markers = {
