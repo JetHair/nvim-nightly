@@ -1,6 +1,3 @@
-local config_dir = vim.fs.dirname(debug.getinfo(1, 'S').source:sub(2))
-vim.opt.runtimepath:append(config_dir)
-
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.o.hlsearch = true
